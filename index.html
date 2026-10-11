@@ -267,6 +267,18 @@
   .site-footer a { color: var(--muted); text-decoration: none; transition: color .15s ease; }
   .site-footer a:hover { color: var(--accent); }
 
+ .gradient-text {
+    background: linear-gradient(
+      100deg,
+      #fff 10%,
+      #8fd8ff 48%,
+      #aa8cff 90%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
   .back-top {
     position: fixed; right: 24px; bottom: 24px; z-index: 5;
     display: grid; place-items: center; width: 40px; height: 40px;
