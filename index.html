@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nythxion Studios - Development</title>
+<meta name="description" content="Nythxion Development builds desktop apps, Discord tools, and open-source projects: Nythxion AI, Nythxion Watermarker, Nythxion Shortcuts, and Nythxion Sort.">
+<meta name="theme-color" content="#0c1020">
+<style>
+  :root {
+    --bg: #070912;
+    --surface: #0c1020;
+    --surface-2: #0a0f1d;
+    --surface-solid: #11172a;
+    --hover: #10162a;
+    --line: #202943;
+    --line-strong: #33405f;
+    --text: #f4f7ff;
+    --muted: #aeb8d0;
+    --subtle: #7f8aa5;
+    --accent: #4da3ff;
+    --accent-hover: #62b4ff;
+    --accent-text: #a9d5ff;
+    --radius: 9px;
+    --radius-sm: 7px;
+    --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    --scrollbar-thumb: #242d47;
+    --scrollbar-thumb-hover: #303b5d;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  * { scrollbar-color: var(--scrollbar-thumb) transparent; scrollbar-width: thin; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    border: 2px solid transparent; border-radius: 10px;
+    background: var(--scrollbar-thumb); background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+  *::-webkit-scrollbar-corner { background: transparent; }
+
+  html { min-width: 320px; scroll-behavior: smooth; scroll-padding-top: 90px; }
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 16px/1.65 var(--font);
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3, p, dl, dd, figure, ul, ol { margin: 0; }
+  ul, ol { padding: 0; }
+  h1 { max-width: 780px; font-size: 64px; font-weight: 800; line-height: 1.04; }
+  h2 { font-size: 35px; font-weight: 700; line-height: 1.2; }
+  h3 { font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .skip-link {
+    position: absolute; top: -100px; left: 12px; z-index: 20;
+    padding: 8px 12px; border-radius: 6px;
+    background: var(--accent); color: #fff; font-weight: 700; text-decoration: none;
+  }
+  .skip-link:focus { top: 12px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    border-bottom: 1px solid var(--line);
+    background: rgba(12, 16, 32, .96);
+    backdrop-filter: blur(14px);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; min-height: 64px;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0;
+    font-weight: 800; text-decoration: none; white-space: nowrap;
+  }
+  .brand img {
+    width: 34px; height: 34px; flex: 0 0 34px;
+    border: 1px solid #2a3858; border-radius: 9px; background: var(--surface-solid); object-fit: contain;
+  }
+  .brand span { color: var(--muted); font-weight: 600; }
+  .nav-links { display: flex; align-items: center; gap: 4px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 36px; padding: 0 12px;
+    border: 1px solid transparent; border-radius: 7px;
+    color: var(--muted); font-size: 13px; line-height: 1; white-space: nowrap; text-decoration: none;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible {
+    border-color: var(--line); background: var(--hover); color: var(--text);
+  }
+  .nav-links a[aria-current="page"] { color: var(--accent-text); }
+
+  .hero { padding: 76px 0 72px; }
+  .lead { margin-top: 18px; max-width: 640px; color: var(--muted); font-size: 17px; }
+  .hero .lead { font-size: 17px; }
+  .tagline { margin-top: 10px; color: var(--accent-text); font-weight: 600; }
+  .fine { margin-top: 12px; color: var(--subtle); font-size: 14px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 28px; }
+
+  .band { padding: 72px 0; border-top: 1px solid var(--line); }
+  .hero, .band { animation: page-enter .5s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes page-enter {
+    from { opacity: 0; transform: translate3d(0, 12px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .section-label {
+    color: var(--accent); font-size: 11px; font-weight: 800;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .section-head { max-width: 720px; margin-bottom: 22px; }
+  .section-head h2 { margin-top: 8px; }
+  .section-head p { max-width: 650px; margin-top: 10px; color: var(--muted); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 38px; padding: 9px 14px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface-solid); color: var(--muted);
+    font: 700 14px/1.2 var(--font); text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .btn:hover { background: var(--hover); border-color: var(--line-strong); color: var(--text); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+
+  .index-grid, .contact-grid { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card {
+    position: relative; display: flex; flex-direction: column; gap: 10px;
+    padding: 24px; overflow: hidden;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
+    color: var(--text); text-decoration: none;
+    transition: border-color .15s ease, background-color .15s ease;
+  }
+  .card::before {
+    content: ""; position: absolute; left: 0; top: 20px; bottom: 20px;
+    width: 2px; background: var(--accent); opacity: .75;
+  }
+  .card:hover { border-color: var(--line-strong); background: var(--hover); }
+  .card strong { font-size: 20px; font-weight: 700; }
+  .card .card-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .tag {
+    align-self: flex-start; padding: 3px 9px;
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    color: var(--muted); font-size: 12px; font-weight: 500; line-height: 1.5;
+  }
+
+  .project-top {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: 48px; align-items: start;
+  }
+  .project-top h2 { font-size: 40px; }
+  .specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .specs > div {
+    padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 7px; background: var(--surface);
+  }
+  .specs dt { color: var(--subtle); font-size: 12px; }
+  .specs dd { margin-top: 2px; font-weight: 600; }
+
+  .shots {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px; margin-top: 48px;
+  }
+  .shot-fig figcaption { margin-top: 10px; color: var(--muted); font-size: 14px; }
+  .shot {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2);
+    overflow: hidden; cursor: zoom-in;
+    transition: border-color .15s ease;
+  }
+  .shot:hover { border-color: var(--line-strong); }
+  .shot.is-missing, .shot.is-missing:hover { cursor: default; border-color: var(--line); }
+  .shot img {
+    position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+  }
+  .shot img.is-missing { display: none; }
+  .ph {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 16px; color: var(--subtle); font-size: 13px; text-align: center;
+  }
+  .ph code { color: var(--muted); font: 12px var(--mono); overflow-wrap: anywhere; }
+
+  .split {
+    display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 48px; margin-top: 48px;
+  }
+  .split--even { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .col { display: grid; gap: 40px; align-content: start; min-width: 0; }
+  .detail { min-width: 0; }
+
+  .list { display: grid; gap: 8px; list-style: none; }
+  .list li {
+    padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 7px; background: var(--surface);
+    color: var(--muted); font-size: 15px;
+  }
+  .notes {
+    display: grid; gap: 10px; padding: 4px 0 4px 16px;
+    border-left: 2px solid var(--accent); list-style: none; color: var(--muted);
+  }
+  ol.steps { display: grid; gap: 8px; padding-left: 22px; color: var(--muted); }
+  ol.steps li::marker { color: var(--subtle); }
+
+  .resource-list { display: grid; gap: 8px; list-style: none; }
+  .resource-list a {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 7px; background: var(--surface);
+    color: var(--text); font-weight: 500; text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .resource-list a span { color: var(--subtle); font-size: 14px; font-weight: 400; }
+  .resource-list a:hover { background: var(--hover); border-color: var(--line-strong); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  thead th, th[scope="row"] { color: var(--subtle); font-weight: 500; font-size: 14px; }
+  th[scope="row"] { width: 170px; }
+  td { color: var(--text); overflow-wrap: anywhere; }
+  kbd {
+    padding: 2px 7px; border: 1px solid var(--line); border-radius: 5px;
+    background: var(--surface-2); color: var(--text); font: 13px var(--mono);
+  }
+
+  .license { margin-top: 48px; max-width: 760px; color: var(--subtle); font-size: 14px; }
+  .license a { color: var(--muted); }
+
+  .prose { max-width: 720px; color: var(--muted); }
+  .values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
+  .value {
+    padding: 13px 14px;
+    border: 1px solid var(--line); border-radius: 7px; background: var(--surface-2);
+  }
+  .value h3 { margin-bottom: 3px; font-size: 14px; }
+  .value p { color: var(--muted); font-size: 14px; }
+
+  .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .link-card {
+    display: block; padding: 16px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+    text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .link-card:hover { background: var(--hover); border-color: var(--line-strong); }
+  .link-card strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  .link-card span { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+
+  .site-footer { border-top: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 13px; }
+  .site-footer .wrap {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 20px;
+    padding-top: 22px; padding-bottom: 22px;
+  }
+  .site-footer a { color: var(--muted); text-decoration: none; transition: color .15s ease; }
+  .site-footer a:hover { color: var(--accent); }
+
+  .back-top {
+    position: fixed; right: 24px; bottom: 24px; z-index: 5;
+    display: grid; place-items: center; width: 40px; height: 40px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface-solid);
+    color: #fff; text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .back-top:hover { border-color: var(--line-strong); background: var(--hover); }
+
+  .lightbox {
+    width: min(1100px, calc(100vw - 32px)); padding: 12px;
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface); color: var(--text);
+  }
+  .lightbox::backdrop { background: rgba(3, 5, 10, .82); }
+  .lightbox img { width: 100%; height: auto; border-radius: 6px; }
+  .lightbox-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+  .lightbox-bar p { color: var(--muted); font-size: 14px; }
+  .lightbox-bar form { margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hero, .band { animation: none; }
+  }
+
+  @media (max-width: 1000px) {
+    .project-top, .split, .split--even { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 850px) {
+    html { scroll-padding-top: 120px; }
+    .nav { align-items: flex-start; flex-direction: column; gap: 8px; padding-top: 12px; padding-bottom: 10px; }
+    .nav-links { width: 100%; }
+  }
+
+  @media (max-width: 680px) {
+    .wrap { padding: 0 18px; }
+    h1 { font-size: 46px; }
+    h2 { font-size: 27px; }
+    .project-top h2 { font-size: 32px; }
+    .hero { padding: 58px 0; }
+    .hero .lead { font-size: 16px; }
+    .band { padding: 56px 0; }
+    .index-grid, .contact-grid, .values { grid-template-columns: 1fr; }
+    .specs { grid-template-columns: 1fr; }
+    th[scope="row"] { width: auto; }
+    .site-footer .wrap { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <nav class="wrap nav" aria-label="Main navigation">
+    <a class="brand" href="homepage.html#top">
+      <img src="Logo.png" alt="" width="32" height="32">
+      Nythxion <span>Studios</span>
+    </a>
+    <div class="nav-links">
+      <a href="homepage.html#top">Home</a>
+      <a href="legalcenter.html">Terms</a>
+      <a href="portfolio.html">Portfolio</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <h1>Built by Developers.<br>Driven by Community.</h1>
+    <p class="lead">Nythxion Development is the software development and engineering division of Nythxion Studios. We build desktop apps, Discord tools, and open-source projects.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#projects">Explore our projects</a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-label">Nythxion Development</div>
+      <h2>Our projects</h2>
+      <p>Explore our desktop tools, Discord projects, and browser games. Each project includes its features, screenshots, downloads, documentation, and source.</p>
+    </div>
+    <ul class="index-grid" aria-label="Development projects">
+      <li><a class="card" href="#nythxion-ai">
+        <span class="tag">Discord</span>
+        <strong>Nythxion AI</strong>
+        <span class="card-desc">A multipurpose Discord bot with AI chat, moderation, and server tools.</span>
+      </a></li>
+      <li><a class="card" href="#nythxion-watermarker">
+        <span class="tag">Windows</span>
+        <strong>Nythxion Watermarker</strong>
+        <span class="card-desc">Desktop software for watermarking and verifying images and videos.</span>
+      </a></li>
+      <li><a class="card" href="#nythxion-shortcuts">
+        <span class="tag">Windows</span>
+        <strong>Nythxion Shortcuts</strong>
+        <span class="card-desc">A Windows utility for opening apps and websites with keyboard shortcuts.</span>
+      </a></li>
+      <li><a class="card" href="#nythxion-sort">
+        <span class="tag">Web browser</span>
+        <strong>Nythxion Sort</strong>
+        <span class="card-desc">A browser game that turns sorting algorithms into hands-on puzzles.</span>
+      </a></li>
+    </ul>
+  </div>
+</section>
+
+<article class="project band" id="nythxion-ai">
+  <div class="wrap">
+    <header class="project-top">
+      <div>
+        <h2>Nythxion AI</h2>
+        <p class="lead">A multipurpose Discord bot with AI chat, moderation, server security, leveling, tickets, welcome messages, utilities, and fun commands.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1505984213869134037" target="_blank" rel="noopener">Add to Discord</a>
+        </div>
+      </div>
+      <dl class="specs">
+        <div><dt>Platform</dt><dd>Discord</dd></div>
+        <div><dt>Technology</dt><dd>Node.js, discord.js</dd></div>
+      </dl>
+    </header>
+
+    <div class="shots">
+      <figure class="shot-fig">
+        <button class="shot" data-caption="AI chat" aria-label="Enlarge screenshot: AI chat">
+          <img src="nythxion-ai-01.png" alt="Nythxion AI replying to a chat message in Discord" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-ai/<wbr>01.png</code></span>
+        </button>
+        <figcaption>AI chat</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Moderation" aria-label="Enlarge screenshot: Moderation">
+          <img src="nythxion-ai-02.png" alt="Nythxion AI moderation actions in a Discord server" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-ai/<wbr>02.png</code></span>
+        </button>
+        <figcaption>Moderation</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Tickets" aria-label="Enlarge screenshot: Tickets">
+          <img src="nythxion-ai-03.png" alt="Nythxion AI ticket panel in a Discord server" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-ai/<wbr>03.png</code></span>
+        </button>
+        <figcaption>Tickets</figcaption>
+      </figure>
+    </div>
+
+    <div class="split">
+      <div class="col">
+        <div class="detail">
+          <h3>Features</h3>
+          <ul class="list">
+            <li>AI chat</li>
+            <li>Moderation</li>
+            <li>Server security</li>
+            <li>Leveling</li>
+            <li>Tickets</li>
+            <li>Welcome messages</li>
+            <li>Utilities</li>
+            <li>Fun commands</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>Resources</h3>
+          <ul class="resource-list">
+            <li><a href="https://discord.gg/T3hxWmpuxA" target="_blank" rel="noopener">Nythxion Discord <span>Community and support</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<article class="project band" id="nythxion-watermarker">
+  <div class="wrap">
+    <header class="project-top">
+      <div>
+        <h2>Nythxion Watermarker</h2>
+        <p class="tagline">Protect. Identify. Verify.</p>
+        <p class="lead">Desktop software for watermarking images and videos, identifying your work, and verifying it later. It runs locally on your computer.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://github.com/NythxionStudios/WatermarkerApp/releases/download/V.1.2.0/Nythxion.Watermarker.Setup.1.2.0.exe" target="_blank" rel="noopener">Download for Windows</a>
+          <a class="btn" href="https://github.com/NythxionStudios/WatermarkerApp/releases/tag/V.1.2.0" target="_blank" rel="noopener">Release notes</a>
+        </div>
+        <p class="fine">Setup 1.2.0 · about 237 MB · Windows 10 or later</p>
+      </div>
+      <dl class="specs">
+        <div><dt>Platform</dt><dd>Windows</dd></div>
+        <div><dt>Technology</dt><dd>Node.js, Electron</dd></div>
+        <div><dt>Version</dt><dd>v1.2.0</dd></div>
+        <div><dt>Released</dt><dd>Sep 28, 2026</dd></div>
+        <div><dt>License</dt><dd>Proprietary</dd></div>
+      </dl>
+    </header>
+
+    <div class="shots">
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Main editor" aria-label="Enlarge screenshot: Main editor">
+          <img src="nythxion-watermarker01.png" alt="Nythxion Watermarker main editor" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-watermarker/<wbr>01.png</code></span>
+        </button>
+        <figcaption>Main editor</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Artwork Archive" aria-label="Enlarge screenshot: Artwork Archive">
+          <img src="nythxion-watermarker02.png" alt="Nythxion Watermarker Artwork Archive" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-watermarker/<wbr>02.png</code></span>
+        </button>
+        <figcaption>Verification &amp; Archive</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Saves" aria-label="Enlarge screenshot: Saves">
+          <img src="nythxion-watermarker03.png" alt="Nythxion Watermarker saved configurations" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-watermarker/<wbr>03.png</code></span>
+        </button>
+        <figcaption>Saves</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Figma integration" aria-label="Enlarge screenshot: Figma integration">
+          <img src="nythxion-watermarker04.png" alt="Nythxion Watermarker Figma integration" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-watermarker/<wbr>04.png</code></span>
+        </button>
+        <figcaption>Figma integration</figcaption>
+      </figure>
+    </div>
+
+    <div class="split">
+      <div class="col">
+        <div class="detail">
+          <h3>Features</h3>
+          <ul class="list">
+            <li>Visible watermarks for images</li>
+            <li>Video watermarking, exported at the original resolution and frame rate</li>
+            <li>Holographic watermark embedding</li>
+            <li>Unique watermark IDs</li>
+            <li>Metadata embedding and verification for images and videos</li>
+            <li>Artwork Archive: a local record of watermarked work with IDs, dates, and verification status</li>
+            <li>Saves: reusable watermark configurations</li>
+            <li>AI Instruction: an extra layer intended to discourage AI tools from removing a watermark</li>
+            <li>Alpha fingerprinting</li>
+            <li>Figma integration, with Figma metadata support</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>System requirements</h3>
+          <ul class="list">
+            <li>Windows 10 or later</li>
+            <li>64-bit processor</li>
+            <li>4 GB RAM or more</li>
+            <li>About 500 MB of free storage</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Installation</h3>
+          <ol class="steps">
+            <li>Run the Nythxion Watermarker Setup installer.</li>
+            <li>Choose an installation folder if you want a different location.</li>
+            <li>Complete the installation.</li>
+            <li>Launch Nythxion Watermarker from the shortcut it creates.</li>
+            <li>The installer also provides a standard Windows uninstall option.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="split split--even">
+      <div class="col">
+        <div class="detail">
+          <h3>Good to know</h3>
+          <ul class="notes">
+            <li>AI Instruction does not guarantee protection. Advanced tools can still remove or change a watermark.</li>
+            <li>Applying a new watermark to an image that is already watermarked may invalidate or overwrite the existing one.</li>
+            <li>The Artwork Archive and saved configurations stay on your computer.</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Documentation and source</h3>
+          <ul class="resource-list">
+            <li><a href="https://github.com/NythxionStudios/WatermarkerApp#readme" target="_blank" rel="noopener">Documentation <span>README on GitHub</span></a></li>
+            <li><a href="https://github.com/NythxionStudios/WatermarkerApp" target="_blank" rel="noopener">Repository <span>Releases only, closed source</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>Release information</h3>
+          <div class="table-wrap">
+            <table>
+              <tbody>
+                <tr><th scope="row">Version</th><td>1.2.0</td></tr>
+                <tr><th scope="row">Released</th><td>Sep 28, 2026</td></tr>
+                <tr><th scope="row">Installer</th><td>Nythxion.Watermarker.Setup.1.2.0.exe</td></tr>
+                <tr><th scope="row">Download size</th><td>About 237 MB</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="license">© 2026 Nythxion Studios. All rights reserved. Nythxion Watermarker is proprietary, closed-source software. You may use it for its intended purpose, but you may not redistribute, modify, reverse engineer, or commercially exploit it without permission from Nythxion Studios.</p>
+  </div>
+</article>
+
+<article class="project band" id="nythxion-shortcuts">
+  <div class="wrap">
+    <header class="project-top">
+      <div>
+        <h2>Nythxion Shortcuts</h2>
+        <p class="tagline">Press. Open. Done.</p>
+        <p class="lead">A Windows utility for opening apps and websites with keyboard shortcuts. Shortcuts keep working while the app runs in the background.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://github.com/NythxionStudios/Shortcuts/releases/download/V.1.0.0/Nythxion.Shortcuts.Setup.1.0.0.exe" target="_blank" rel="noopener">Download for Windows</a>
+          <a class="btn" href="https://github.com/NythxionStudios/Shortcuts/releases/tag/V.1.0.0" target="_blank" rel="noopener">Release notes</a>
+        </div>
+        <p class="fine">Setup 1.0.0 · about 113 MB · Windows 10 or later</p>
+      </div>
+      <dl class="specs">
+        <div><dt>Platform</dt><dd>Windows</dd></div>
+        <div><dt>Technology</dt><dd>Node.js, CPython, Electron</dd></div>
+        <div><dt>Version</dt><dd>v1.0.0</dd></div>
+        <div><dt>Released</dt><dd>Oct 5, 2026</dd></div>
+        <div><dt>License</dt><dd>Proprietary</dd></div>
+      </dl>
+    </header>
+
+    <div class="shots">
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Shortcut list" aria-label="Enlarge screenshot: Shortcut list">
+          <img src="nythxion-shortcuts01.png" alt="Nythxion Shortcuts list of configured shortcuts" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-shortcuts/<wbr>01.png</code></span>
+        </button>
+        <figcaption>Shortcut list</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Application finder" aria-label="Enlarge screenshot: Application finder">
+          <img src="nythxion-shortcuts02.png" alt="Nythxion Shortcuts application finder" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-shortcuts/<wbr>02.png</code></span>
+        </button>
+        <figcaption>Application finder</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Settings and themes" aria-label="Enlarge screenshot: Settings and themes">
+          <img src="nythxion-shortcuts03.png" alt="Nythxion Shortcuts settings and themes" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-shortcuts/<wbr>03.png</code></span>
+        </button>
+        <figcaption>Overlay</figcaption>
+      </figure>
+    </div>
+
+    <div class="split">
+      <div class="col">
+        <div class="detail">
+          <h3>Features</h3>
+          <ul class="list">
+            <li>Global keyboard shortcuts that work while the app runs in the background</li>
+            <li>Website shortcuts, with addresses completed automatically (youtube.com becomes https://youtube.com)</li>
+            <li>Application shortcuts, with an app finder so you don't need to type file paths</li>
+            <li>Restores or focuses an application window that is already open</li>
+            <li>Custom shortcut configuration</li>
+            <li>Light, purple, and dark themes</li>
+            <li>UI sound toggle</li>
+            <li>Custom Nythxion interface with custom popups</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Example shortcuts</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Shortcut</th><th scope="col">Opens</th></tr></thead>
+              <tbody>
+                <tr><td><kbd>Ctrl + M</kbd></td><td>Music</td></tr>
+                <tr><td><kbd>Ctrl + N</kbd></td><td>Nythxion</td></tr>
+                <tr><td><kbd>Ctrl + D</kbd></td><td>Discord</td></tr>
+                <tr><td><kbd>Ctrl + G</kbd></td><td>GitHub</td></tr>
+                <tr><td><kbd>Ctrl + Y</kbd></td><td>YouTube</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fine">These are examples. You can change any of them.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>System requirements</h3>
+          <ul class="list">
+            <li>Windows 10 or later</li>
+            <li>64-bit processor</li>
+            <li>4 GB RAM or more</li>
+            <li>About 200 MB of free storage</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Installation</h3>
+          <ol class="steps">
+            <li>Run the Nythxion Shortcuts Setup installer.</li>
+            <li>Choose an installation folder if you want a different location.</li>
+            <li>Complete the installation.</li>
+            <li>Launch Nythxion Shortcuts from the shortcut it creates.</li>
+            <li>The installer also provides a standard Windows uninstall option.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="split split--even">
+      <div class="col">
+        <div class="detail">
+          <h3>Good to know</h3>
+          <ul class="notes">
+            <li>Normal use does not require administrator privileges.</li>
+            <li>Shortcut configurations and settings are stored locally and persist between sessions.</li>
+          </ul>
+        </div>
+        <div class="detail">
+          <h3>Documentation and source</h3>
+          <ul class="resource-list">
+            <li><a href="https://github.com/NythxionStudios/Shortcuts#readme" target="_blank" rel="noopener">Documentation <span>README on GitHub</span></a></li>
+            <li><a href="https://github.com/NythxionStudios/Shortcuts" target="_blank" rel="noopener">Repository <span>Releases only, closed source</span></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>Release information</h3>
+          <div class="table-wrap">
+            <table>
+              <tbody>
+                <tr><th scope="row">Version</th><td>1.0.0</td></tr>
+                <tr><th scope="row">Released</th><td>Oct 5, 2026</td></tr>
+                <tr><th scope="row">Installer</th><td>Nythxion.Shortcuts.Setup.1.0.0.exe</td></tr>
+                <tr><th scope="row">Download size</th><td>About 113 MB</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="license">© 2026 Nythxion Studios. All rights reserved. Nythxion Shortcuts is proprietary, closed-source software. You may use it for its intended purpose, but you may not redistribute, modify, reverse engineer, or commercially exploit it without permission from Nythxion Studios.</p>
+  </div>
+</article>
+
+<article class="project band" id="nythxion-sort">
+  <div class="wrap">
+    <header class="project-top">
+      <div>
+        <h2>Nythxion Sort</h2>
+        <p class="lead">A small, dependency-free browser game that turns sorting algorithms into hands-on puzzles.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://nythxionstudios.github.io/NythxionSort/" target="_blank" rel="noopener">Play in your browser</a>
+          <a class="btn" href="https://github.com/NythxionStudios/NythxionSort" target="_blank" rel="noopener">View source on GitHub</a>
+        </div>
+      </div>
+      <dl class="specs">
+        <div><dt>Platform</dt><dd>Web browser</dd></div>
+        <div><dt>Technology</dt><dd>HTML, CSS, JavaScript</dd></div>
+        <div><dt>License</dt><dd>MIT</dd></div>
+        <div><dt>Build step</dt><dd>None</dd></div>
+      </dl>
+    </header>
+
+    <div class="shots">
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Game Mode" aria-label="Enlarge screenshot: Game Mode">
+          <img src="nythxion-sort01.png" alt="Nythxion Sort Game Mode with a Merge Sort round" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-sort/<wbr>01.png</code></span>
+        </button>
+        <figcaption>Game Mode</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Visualizer" aria-label="Enlarge screenshot: Visualizer">
+          <img src="nythxion-sort02.png" alt="Nythxion Sort Visualizer showing a Quick Sort run" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-sort/<wbr>02.png</code></span>
+        </button>
+        <figcaption>Visualizer</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="shot" data-caption="Compare mode" aria-label="Enlarge screenshot: Compare mode">
+          <img src="nythxion-sort03.png" alt="Nythxion Sort Compare mode running both algorithms" data-shot>
+          <span class="ph"><span>Screenshot placeholder</span><code>assets/<wbr>screenshots/<wbr>nythxion-sort/<wbr>03.png</code></span>
+        </button>
+        <figcaption>Compare mode</figcaption>
+      </figure>
+    </div>
+
+    <div class="split">
+      <div class="col">
+        <div class="detail">
+          <h3>Features</h3>
+          <ul class="list">
+            <li>Game Mode for Merge Sort and Quick Sort, with 8 to 64 bars</li>
+            <li>Scoring with combos for correct moves</li>
+            <li>Optional sound effects that you can mute</li>
+            <li>Visualizer Mode for Merge Sort and Quick Sort, with 8 to 256 bars</li>
+            <li>Compare mode runs both algorithms on the same starting array</li>
+            <li>Adjustable step timing, pause and resume, and single-step playback</li>
+            <li>Short explanations of each algorithm</li>
+            <li>Restart the same array, or shuffle for a new one</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="detail">
+          <h3>Run it yourself</h3>
+          <ol class="steps">
+            <li>Clone the repository from GitHub.</li>
+            <li>Open index.html in a modern browser.</li>
+            <li>No build step, package installation, or backend is required.</li>
+          </ol>
+        </div>
+        <div class="detail">
+          <h3>Documentation and source</h3>
+          <ul class="resource-list">
+            <li><a href="https://github.com/NythxionStudios/NythxionSort#readme" target="_blank" rel="noopener">Documentation <span>README on GitHub</span></a></li>
+            <li><a href="https://github.com/NythxionStudios/NythxionSort" target="_blank" rel="noopener">Source repository <span>Public</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="license">The MIT License covers the software and its included assets, including source code, HTML, CSS, JavaScript, images, icons, and sound effects. The Nythxion name, logos, and branding are not included. If you fork the project, remove or replace the branding, and do not present your version as an official Nythxion project. <a href="https://github.com/NythxionStudios/NythxionSort/blob/main/LICENSE" target="_blank" rel="noopener">Read the full license.</a></p>
+  </div>
+</article>
+
+<section class="band" id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>About Nythxion Development</h2>
+    </div>
+    <p class="prose">Nythxion Development is the software development and engineering division of Nythxion Studios. Our projects follow a free-first philosophy, and we develop them alongside the communities that use them.</p>
+    <div class="values">
+      <div class="value"><h3>Useful</h3><p>We build things with an actual purpose.</p></div>
+      <div class="value"><h3>Accessible</h3><p>Projects should be understandable and easy to use.</p></div>
+      <div class="value"><h3>Community-driven</h3><p>We build alongside the communities using our projects.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="links">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Links</h2>
+      <p>Follow our work, join the community, or get in touch.</p>
+    </div>
+    <div class="contact-grid">
+      <a class="link-card" href="https://github.com/NythxionStudios" target="_blank" rel="noopener"><strong>GitHub</strong><span class="card-desc">Repositories and releases</span></a>
+      <a class="link-card" href="https://discord.gg/T3hxWmpuxA" target="_blank" rel="noopener"><strong>Discord</strong><span class="card-desc">Join the Nythxion community</span></a>
+      <a class="link-card" href="mailto:nythxionai@gmx.net"><strong>Email</strong><span class="card-desc">nythxionai@gmx.net</span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>© 2026 Nythxion Studios · Nythxion Designs · Nythxion Development · Nythxion AI · Nythxion Open-Source</div>
+    <div><a href="/LegalCenter/">Nythxion Studios Terms</a></div>
+  </div>
+</footer>
+
+<a class="back-top" href="#top" aria-label="Back to top">↑</a>
+
+<dialog class="lightbox" id="lightbox" aria-label="Screenshot viewer">
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-bar">
+    <p id="lightbox-caption"></p>
+    <form method="dialog"><button class="btn" value="close">Close</button></form>
+  </div>
+</dialog>
+
+<script>
+  (function () {
+    document.querySelectorAll('img[data-shot]').forEach(function (img) {
+      var slot = img.closest('.shot');
+      var markMissing = function () {
+        slot.classList.add('is-missing');
+        img.classList.add('is-missing');
+      };
+      img.addEventListener('error', markMissing);
+      if (img.complete && img.naturalWidth === 0) markMissing();
+    });
+
+    var dialog = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightbox-img');
+    var lightboxCaption = document.getElementById('lightbox-caption');
+
+    document.querySelectorAll('.shot').forEach(function (slot) {
+      slot.addEventListener('click', function () {
+        if (slot.classList.contains('is-missing')) return;
+        var img = slot.querySelector('img');
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        lightboxCaption.textContent = slot.dataset.caption || '';
+        dialog.showModal();
+      });
+    });
+
+    dialog.addEventListener('click', function (e) {
+      if (e.target === dialog) dialog.close();
+    });
+  })();
+</script>
+</body>
+</html>
